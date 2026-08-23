@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Piano Alimentare</title>
+  <style>
+    :root {
+      --green: #2d6a4f;
+      --green-light: #40916c;
+      --green-pale: #d8f3dc;
+      --green-muted: #b7e4c7;
+      --orange: #e76f51;
+      --orange-pale: #fde8e0;
+      --bg: #f8faf9;
+      --card: #ffffff;
+      --text: #1b2d27;
+      --muted: #6c8f7e;
+      --border: #d0e4d8;
+      --shadow: 0 2px 12px rgba(45,106,79,.10);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+    header {
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+      color: white;
+      padding: 20px 20px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+    header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.3px; }
+    header .date-line { font-size: .85rem; opacity: .85; margin-top: 2px; }
+    .header-row { display: flex; align-items: flex-start; justify-content: space-between; }
+    .water-badge {
+      background: rgba(255,255,255,.2);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: .75rem;
+      white-space: nowrap;
+    }
+    main { max-width: 680px; margin: 0 auto; padding: 16px 14px; }
+    .today-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 2px solid var(--green-light);
+    }
+    .today-header {
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+      color: white;
+      padding: 14px 18px;
+    }
+    .today-label { font-size: .7rem; text-transform: uppercase; letter-spacing: 1px; opacity: .8; }
+    .today-day { font-size: 1.5rem; font-weight: 700; margin: 2px 0 4px; }
+    .today-meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: .8rem; opacity: .9; }
+    .badge {
+      background: rgba(255,255,255,.22);
+      border-radius: 12px;
+      padding: 2px 9px;
+    }
+    .badge.tipo-attivo { background: rgba(255,200,100,.3); }
+    .badge.tipo-riposo { background: rgba(150,220,255,.25); }
+    .meals-list { padding: 8px 0; }
+    .meal-item {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+    .meal-item:last-child { border-bottom: none; }
+    .meal-time { font-size: .78rem; font-weight: 700; color: var(--green); padding-top: 2px; }
+    .meal-type-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; }
+    .meal-type { font-size: .7rem; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); font-weight: 600; }
+    .meal-kcal { font-size: .72rem; color: var(--green-light); font-weight: 600; }
+    .meal-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .meal-macros { font-size: .72rem; color: var(--muted); margin-bottom: 6px; }
+    .meal-desc { font-size: .83rem; color: #444; line-height: 1.45; white-space: pre-line; }
+    .ingredients-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .ing-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--green-pale);
+      border: 1px solid var(--green-muted);
+      border-radius: 20px;
+      padding: 3px 9px 3px 8px;
+      font-size: .72rem;
+      color: var(--green);
+      cursor: pointer;
+      transition: all .15s;
+      user-select: none;
+    }
+    .ing-chip:hover { background: var(--green-muted); }
+    .ing-chip.added { background: var(--green); color: white; border-color: var(--green); }
+    .ing-chip::before { content: '+'; font-weight: 700; font-size: .85em; }
+    .ing-chip.added::before { content: '✓'; }
+    .section-title {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      font-weight: 700;
+      margin: 20px 0 10px;
+      padding: 0 2px;
+    }
+    .day-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .day-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 16px;
+      cursor: pointer;
+      user-select: none;
+      gap: 10px;
+    }
+    .day-header:hover { background: var(--green-pale); }
+    .day-name { font-size: 1rem; font-weight: 700; }
+    .day-sub { font-size: .75rem; color: var(--muted); margin-top: 1px; }
+    .day-right { display: flex; align-items: center; gap: 8px; }
+    .kcal-badge {
+      font-size: .75rem;
+      font-weight: 700;
+      background: var(--green-pale);
+      color: var(--green);
+      border-radius: 12px;
+      padding: 3px 9px;
+    }
+    .chevron { font-size: .9rem; color: var(--muted); transition: transform .2s; }
+    .day-card.open .chevron { transform: rotate(180deg); }
+    .day-body { display: none; border-top: 1px solid var(--border); }
+    .day-card.open .day-body { display: block; }
+    .fab {
+      position: fixed;
+      bottom: 22px;
+      right: 18px;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 28px;
+      padding: 14px 20px;
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(45,106,79,.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 200;
+      transition: background .15s;
+    }
+    .fab:hover { background: var(--green-light); }
+    .fab-count {
+      background: white;
+      color: var(--green);
+      border-radius: 12px;
+      font-size: .75rem;
+      padding: 1px 7px;
+      font-weight: 800;
+      min-width: 22px;
+      text-align: center;
+    }
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 300;
+      display: none;
+      backdrop-filter: blur(2px);
+    }
+    .drawer-overlay.open { display: block; }
+    .drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 680px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px 20px 0 0;
+      z-index: 400;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .drawer.open { transform: translateY(0); }
+    .drawer-handle { width: 40px; height: 4px; background: #ddd; border-radius: 4px; margin: 12px auto 4px; }
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .drawer-title { font-size: 1.05rem; font-weight: 700; }
+    .drawer-actions { display: flex; gap: 8px; }
+    .btn {
+      border: none;
+      border-radius: 20px;
+      padding: 7px 14px;
+      font-size: .8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn-copy { background: var(--green); color: white; }
+    .btn-clear { background: var(--orange-pale); color: var(--orange); }
+    .drawer-body { overflow-y: auto; padding: 14px 20px; flex: 1; }
+    .shopping-empty { text-align: center; color: var(--muted); padding: 30px 0; font-size: .9rem; }
+    .shopping-empty span { display: block; font-size: 2rem; margin-bottom: 8px; }
+    .shop-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .shop-item:last-child { border-bottom: none; }
+    .shop-check {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--green);
+      border-radius: 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      color: white;
+      background: transparent;
+      transition: background .15s;
+    }
+    .shop-check.done { background: var(--green); }
+    .shop-item-text { flex: 1; font-size: .88rem; }
+    .shop-item-text.done { text-decoration: line-through; color: var(--muted); }
+    .shop-remove { background: none; border: none; color: #ccc; font-size: 1.1rem; cursor: pointer; padding: 0 4px; line-height: 1; }
+    .shop-remove:hover { color: var(--orange); }
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text);
+      color: white;
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-size: .85rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity .2s, transform .2s;
+      pointer-events: none;
+      z-index: 500;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div>
+      <h1>Piano Alimentare</h1>
+      <div class="date-line" id="headerDate"></div>
+    </div>
+    <div class="water-badge">&#x1F4A7; 3L/die</div>
+  </div>
+</header>
+
+<main>
+  <div id="todaySection"></div>
+  <div class="section-title">Altri giorni</div>
+  <div id="otherDays"></div>
+</main>
+
+<button class="fab" onclick="openDrawer()">
+  &#x1F6D2; Lista spesa
+  <span class="fab-count" id="fabCount">0</span>
+</button>
+
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<div class="drawer" id="drawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-head">
+    <div class="drawer-title">Lista della spesa</div>
+    <div class="drawer-actions">
+      <button class="btn btn-copy" onclick="copyList()">&#x1F4CB; Copia</button>
+      <button class="btn btn-clear" onclick="clearList()">&#x1F5D1; Svuota</button>
+    </div>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var MEAL_PLAN = [
+  {
+    name: 'Domenica', kcal: '~1.550 kcal', type: 'riposo',
+    activity: 'Pranzo libero + riposo',
+    meals: [
+      { time:'07:00', type:'Colazione', kcal:'~330 kcal', macros:'P 24g · C 45g · G 7g',
+        name:'Yogurt greco + avena',
+        desc:'200g yogurt greco 0% + 40g fiocchi d\'avena + 1 cucchiaino miele',
+        ing:['Yogurt greco 0% (200g)','Fiocchi d\'avena (40g)','Miele (1 cucchiaino)'] },
+      { time:'13:00', type:'Pranzo LIBERO', kcal:'--', macros:'',
+        name:'Pranzo libero',
+        desc:'Nessuna restrizione - goditi il pasto con calma e senza stress.\nPreferisci piatti mediterranei, evita fritti ripetuti e dolci pesanti.',
+        ing:[] },
+      { time:'16:30', type:'Spuntino', kcal:'~90 kcal', macros:'P 2g · C 20g · G 0g',
+        name:'Frutta estiva',
+        desc:'300g anguria - spuntino fresco, ipocalorico',
+        ing:['Anguria (300g)'] },
+      { time:'19:30', type:'Cena', kcal:'~430 kcal', macros:'P 48g · C 12g · G 18g',
+        name:'Salmone + melanzane',
+        desc:'180g salmone al forno con erbe aromatiche e limone\n400g melanzane grigliate con origano',
+        ing:['Salmone (180g)','Melanzane (400g)','Limone'] },
+      { time:'21:00', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
+        name:'Cioccolato fondente 90%',
+        desc:'20g - attendere 2h prima di sdraiarsi',
+        ing:['Cioccolato fondente 90% (20g)'] }
+    ]
+  },
+  {
+    name: 'Lunedì', kcal: '~2.000 kcal', type: 'attivo',
+    activity: 'Elastici 30 min',
+    meals: [
+      { time:'07:00', type:'Colazione', kcal:'~240 kcal', macros:'P 8g · C 42g · G 5g',
+        name:'Bowl di avena',
+        desc:'50g fiocchi di avena con 200ml latte di avena non zuccherato + 1 cucchiaino miele + frutto fresco (pesca o banana)',
+        ing:['Fiocchi di avena (50g)','Latte di avena non zuccherato (200ml)','Miele (1 cucchiaino)','Pesca o banana'] },
+      { time:'10:00', type:'Spuntino mattina', kcal:'~130 kcal', macros:'P 4g · C 16g · G 6g',
+        name:'Gallette + frutta secca',
+        desc:'3 gallette di riso integrale + 15g mandorle + 1 frutto fresco di stagione',
+        ing:['Gallette di riso integrale (3)','Mandorle (15g)','Frutto fresco di stagione'] },
+      { time:'13:30', type:'Pranzo', kcal:'~480 kcal', macros:'P 45g · C 52g · G 13g',
+        name:'Orzo + tacchino + pomodori',
+        desc:'65g orzo perlato con zucchine e menta\n130g tacchino a fettine al limone e salvia\n200g pomodori gratinati al forno o padella (no crudi)',
+        ing:['Orzo perlato (65g)','Zucchine','Tacchino a fettine (130g)','Pomodori (200g)'] },
+      { time:'16:30', type:'Spuntino', kcal:'~130 kcal', macros:'P 5g · C 6g · G 9g',
+        name:'Frutta secca',
+        desc:'20g mandorle + 1 frutto fresco di stagione (anguria, melone, pesca)',
+        ing:['Mandorle (20g)','Frutto fresco (anguria, melone o pesca)'] },
+      { time:'19:30', type:'Cena', kcal:'~420 kcal', macros:'P 46g · C 8g · G 18g',
+        name:'Pollo + melanzane',
+        desc:'200g petto di pollo al forno con curcuma e limone\n400g melanzane grigliate\nNiente carboidrati aggiunti alla cena',
+        ing:['Petto di pollo (200g)','Melanzane (400g)','Limone'] },
+      { time:'21:00', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
+        name:'Cioccolato fondente 90%',
+        desc:'20g - attendere 2h prima di sdraiarsi',
+        ing:['Cioccolato fondente 90% (20g)'] }
+    ]
+  },
+  {
+    name: 'Martedì', kcal: '~1.500 kcal', type: 'riposo',
+    activity: 'Riposo + camminata serale 30 min',
+    meals: [
+      { time:'07:00', type:'Colazione', kcal:'~360 kcal', macros:'P 34g · C 28g · G 12g',
+        name:'Barretta proteica + gallette',
+        desc:'1 barretta (>=20g proteine, ~200 kcal)\n2 gallette di riso integrale + 20g noci\nCaffe o te verde senza zucchero',
+        ing:['Barretta proteica >=20g (200kcal)','Gallette di riso integrale (2)','Noci (20g)'] },
+      { time:'10:00', type:'Spuntino mattina', kcal:'~120 kcal', macros:'P 10g · C 8g · G 4g',
+        name:'Yogurt + frutta',
+        desc:'100g yogurt greco 0% + 1 frutto a scelta',
+        ing:['Yogurt greco 0% (100g)','Frutto a scelta'] },
+      { time:'13:00', type:'Pranzo', kcal:'~480 kcal', macros:'P 47g · C 38g · G 14g',
+        name:'Piselli + quinoa + sgombro',
+        desc:'150g piselli con cipolla e menta + 35g quinoa\n100g sgombro al naturale sgocciolato con limone\n200g finocchi e sedano crudi',
+        ing:['Piselli (150g)','Quinoa (35g)','Sgombro al naturale (100g)','Finocchi (200g)','Sedano','Cipolla'] },
+      { time:'16:30', type:'Spuntino', kcal:'~120 kcal', macros:'P 4g · C 6g · G 9g',
+        name:'Frutta secca',
+        desc:'20g noci + frutto fresco stagionale',
+        ing:['Noci (20g)','Frutto fresco stagionale'] },
+      { time:'19:30', type:'Cena', kcal:'~390 kcal', macros:'P 46g · C 10g · G 17g',
+        name:'Spigola + fagiolini',
+        desc:'200g spigola al cartoccio con pomodorini cotti, capperi e timo\n400g fagiolini al vapore con aglio\nGiorno riposo: nessun carboidrato aggiunto',
+        ing:['Spigola (200g)','Pomodorini','Fagiolini (400g)'] },
+      { time:'21:00', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
+        name:'Cioccolato fondente 90%',
+        desc:'20g - attendere 2h prima di sdraiarsi',
+        ing:['Cioccolato fondente 90% (20g)'] }
+    ]
+  },
+  {
+    name: 'Mercoledì', kcal: '~2.000 kcal', type: 'attivo',
+    activity: 'Camminata 45-60 min',
+    meals: [
+      { time:'07:00', type:'Colazione', kcal:'~310 kcal', macros:'P 24g · C 42g · G 5g',
+        name:'Wasa + frutta',
+        desc:'3-4 fette Wasa + 1 cucchiaino miele + 1 frutto fresco (banana o melone 150g)\nCaffe o te verde senza zucchero',
+        ing:['Fette Wasa (3-4)','Miele (1 cucchiaino)','Banana o melone (150g)'] },
+      { time:'10:00', type:'Spuntino mattina', kcal:'~140 kcal', macros:'P 12g · C 10g · G 5g',
+        name:'Yogurt + frutta',
+        desc:'150g yogurt greco 0% + 1 frutto stagionale',
+        ing:['Yogurt greco 0% (150g)','Frutto stagionale'] },
+      { time:'13:30', type:'Pranzo', kcal:'~490 kcal', macros:'P 45g · C 54g · G 13g',
+        name:'Farro + pollo + radicchio',
+        desc:'65g farro con funghi\n150g petto di pollo al forno con paprika affumicata\n200g radicchio e cetrioli crudi',
+        ing:['Farro (65g)','Funghi','Petto di pollo (150g)','Radicchio (200g)','Cetrioli'] },
+      { time:'16:30', type:'Spuntino', kcal:'~130 kcal', macros:'P 5g · C 8g · G 9g',
+        name:'Frutta secca',
+        desc:'20g noci o mandorle + frutto estivo abbondante (200g anguria o melone)',
+        ing:['Noci o mandorle (20g)','Anguria o melone (200g)'] },
+      { time:'19:30', type:'Cena', kcal:'~410 kcal', macros:'P 44g · C 8g · G 18g',
+        name:'Tonno + cavolini',
+        desc:'180g tonno fresco alla piastra con sesamo e limone\n400g cavolini di Bruxelles al forno',
+        ing:['Tonno fresco (180g)','Cavolini di Bruxelles (400g)','Limone'] },
+      { time:'21:00', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
+        name:'Cioccolato fondente 90%',
+        desc:'20g - attendere 2h prima di sdraiarsi',
+        ing:['Cioccolato fondente 90% (20g)'] }
+    ]
+  },
+  {
+    name: 'Giovedì', kcal: '~1.500 kcal', type: 'riposo',
+    activity: 'Riposo + camminata serale 30 min',
+    meals: [
+      { time:'07:00', type:'Colazione', kcal:'~360 kcal', macros:'P 34g · C 28g · G 12g',
+        name:'Barretta proteica + gallette',
+        desc:'1 barretta (>=20g proteine, ~200 kcal)\n2 gallette di riso integrale + 20g noci',
+        ing:['Barretta proteica >=20g (200kcal)','Gallette di riso integrale (2)','Noci (20g)'] },
+      { time:'10:00', type:'Spuntino mattina', kcal:'~120 kcal', macros:'P 10g · C 8g · G 4g',
+        name:'Yogurt + frutta',
+        desc:'100g yogurt greco 0% + 1 frutto (pesca, albicocche 3pz, mela)',
+        ing:['Yogurt greco 0% (100g)','Frutto (pesca, albicocche o mela)'] },
+      { time:'13:00', type:'Pranzo', kcal:'~490 kcal', macros:'P 50g · C 38g · G 14g',
+        name:'Fagioli + riso + tonno',
+        desc:'160g fagioli cannellini con salvia e aglio + 30g riso integrale\n100g tonno al naturale con limone e prezzemolo\n200g carote e sedano crudi',
+        ing:['Fagioli cannellini (160g)','Riso integrale (30g crudo)','Tonno al naturale (100g)','Carote (200g)','Sedano','Limone'] },
+      { time:'16:30', type:'Spuntino', kcal:'~120 kcal', macros:'P 4g · C 6g · G 9g',
+        name:'Frutta estiva',
+        desc:'200g anguria o melone - idratazione estiva',
+        ing:['Anguria o melone (200g)'] },
+      { time:'19:30', type:'Cena', kcal:'~380 kcal', macros:'P 46g · C 8g · G 17g',
+        name:'Salmone + spinaci',
+        desc:'200g salmone al vapore con limone e aneto\n400g spinaci freschi saltati con aglio\nNessun carboidrato aggiunto',
+        ing:['Salmone (200g)','Spinaci freschi (400g)','Limone'] },
+      { time:'21:00', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
+        name:'Cioccolato fondente 90%',
+        desc:'20g - attendere 2h prima di sdraiarsi',
+        ing:['Cioccolato fondente 90% (20g)'] }
+    ]
+  },
+  {
+    name: 'Venerdì', kcal: '~2.000 kcal', type: 'attivo',
+    activity: 'Elastici 30 min + pizza serale',
+    meals: [
+      { time:'07:00', type:'Colazione', kcal:'~320 kcal', macros:'P 14g · C 42g · G 8g',
+        name:'Avena e frutta',
+        desc:'50g fiocchi di avena con 200ml latte di avena non zuccherato + 1 cucchiaino miele + frutto fresco (pesca o banana)\nCaffe o te senza zucchero',
+        ing:['Fiocchi di avena (50g)','Latte di avena non zuccherato (200ml)','Miele','Pesca o banana'] },
+      { time:'10:00', type:'Spuntino mattina', kcal:'~130 kcal', macros:'P 4g · C 22g · G 4g',
+        name:'Barretta cereali',
+        desc:'1 barretta ai cereali integrali (no cioccolato, <130 kcal) + 1 frutto fresco',
+        ing:['Barretta cereali integrali <130kcal','Frutto fresco'] },
+      { time:'13:30', type:'Pranzo', kcal:'~490 kcal', macros:'P 50g · C 54g · G 12g',
+        name:'Pasta + gamberetti',
+        desc:'60g pasta integrale con pesto di basilico e 100g gamberetti al vapore\n250g insalata di finocchi, arancia e olive nere',
+        ing:['Pasta integrale (60g)','Pesto di basilico','Gamberetti (100g)','Finocchi (250g)','Arancia','Olive nere'] },
+      { time:'16:30', type:'Spuntino', kcal:'~130 kcal', macros:'P 5g · C 8g · G 9g',
+        name:'Frutta secca',
+        desc:'20g mandorle + frutto fresco di stagione',
+        ing:['Mandorle (20g)','Frutto fresco di stagione'] },
+      { time:'19:30', type:'Cena - PIZZA', kcal:'~700 kcal', macros:'P 25g · C 85g · G 22g',
+        name:'Pizza margherita',
+        desc:'1 pizza intera margherita - goditi senza sensi di colpa!',
+        ing:[] }
+    ]
+  },
+  {
+    name: 'Sabato', kcal: '~1.550 kcal', type: 'riposo',
+    activity: 'Riposo + camminata serale 30 min',
+    meals: [
+      { time:'07:00', type:'Colazione', kcal:'~360 kcal', macros:'P 34g · C 28g · G 12g',
+        name:'Barretta proteica + gallette',
+        desc:'1 barretta (>=20g proteine, ~200 kcal)\n2 gallette di riso integrale + 20g noci',
+        ing:['Barretta proteica >=20g (200kcal)','Gallette di riso integrale (2)','Noci (20g)'] },
+      { time:'10:00', type:'Spuntino mattina', kcal:'~120 kcal', macros:'P 10g · C 8g · G 4g',
+        name:'Yogurt + frutta',
+        desc:'100g yogurt greco 0% + 1 frutto',
+        ing:['Yogurt greco 0% (100g)','Frutto a scelta'] },
+      { time:'13:00', type:'Pranzo', kcal:'~500 kcal', macros:'P 50g · C 38g · G 14g',
+        name:'Lenticchie + farro + sgombro',
+        desc:'160g lenticchie rosse in umido con aglio e alloro + 30g farro\n100g sgombro al naturale sgocciolato con limone\n200g pomodori al forno con origano',
+        ing:['Lenticchie rosse (160g)','Farro (30g)','Sgombro al naturale (100g)','Pomodori (200g)'] },
+      { time:'16:30', type:'Spuntino', kcal:'~90 kcal', macros:'P 2g · C 20g · G 0g',
+        name:'Frutta estiva',
+        desc:'300g anguria o 200g melone - zero grassi, idratante',
+        ing:['Anguria (300g) o melone (200g)'] },
+      { time:'19:30', type:'Cena', kcal:'~370 kcal', macros:'P 48g · C 5g · G 17g',
+        name:'Merluzzo + broccoli',
+        desc:'200g merluzzo al forno con pomodorini cotti, capperi e origano\n350g broccoli al vapore con limone',
+        ing:['Merluzzo (200g)','Pomodorini','Broccoli (350g)','Limone'] },
+      { time:'21:00', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
+        name:'Cioccolato fondente 90%',
+        desc:'20g - attendere 2h prima di sdraiarsi',
+        ing:['Cioccolato fondente 90% (20g)'] }
+    ]
+  }
+];
+
+var shoppingList = JSON.parse(localStorage.getItem('shoppingList') || '[]');
+var addedSet = new Set(shoppingList.map(function(i){ return i.text; }));
+
+function saveList() {
+  localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
+}
+
+var today = new Date();
+var dayIdx = today.getDay();
+var todayData = MEAL_PLAN[dayIdx];
+
+var DAYS_IT = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+var MONTHS_IT = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+
+document.getElementById('headerDate').textContent =
+  DAYS_IT[dayIdx] + ' ' + today.getDate() + ' ' + MONTHS_IT[today.getMonth()] + ' ' + today.getFullYear();
+
+function renderMeals(meals) {
+  return meals.map(function(m) {
+    var chips = '';
+    if (m.ing.length) {
+      chips = '<div class="ingredients-row">' +
+        m.ing.map(function(i) {
+          var added = addedSet.has(i) ? ' added' : '';
+          return '<span class="ing-chip' + added + '" onclick="toggleIngredient(event, ' + JSON.stringify(i) + ')">' + i + '</span>';
+        }).join('') +
+      '</div>';
+    }
+    return '<div class="meal-item">' +
+      '<div class="meal-time">' + m.time + '</div>' +
+      '<div class="meal-right">' +
+        '<div class="meal-type-row">' +
+          '<span class="meal-type">' + m.type + '</span>' +
+          '<span class="meal-kcal">' + m.kcal + '</span>' +
+        '</div>' +
+        '<div class="meal-name">' + m.name + '</div>' +
+        (m.macros ? '<div class="meal-macros">' + m.macros + '</div>' : '') +
+        '<div class="meal-desc">' + m.desc + '</div>' +
+        chips +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderTodayCard(d) {
+  return '<div class="today-card">' +
+    '<div class="today-header">' +
+      '<div class="today-label">Oggi</div>' +
+      '<div class="today-day">' + d.name + '</div>' +
+      '<div class="today-meta">' +
+        '<span class="badge">' + d.kcal + '</span>' +
+        '<span class="badge tipo-' + d.type + '">' + (d.type === 'attivo' ? 'Attivo - ' : 'Riposo - ') + d.activity + '</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="meals-list">' + renderMeals(d.meals) + '</div>' +
+  '</div>';
+}
+
+function renderDayCard(d) {
+  return '<div class="day-card" onclick="toggleDay(event, this)">' +
+    '<div class="day-header">' +
+      '<div>' +
+        '<div class="day-name">' + d.name + '</div>' +
+        '<div class="day-sub">' + d.activity + '</div>' +
+      '</div>' +
+      '<div class="day-right">' +
+        '<span class="kcal-badge">' + d.kcal + '</span>' +
+        '<span class="chevron">&#x25BC;</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="day-body">' +
+      '<div class="meals-list">' + renderMeals(d.meals) + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+document.getElementById('todaySection').innerHTML = renderTodayCard(todayData);
+
+var othersHTML = '';
+MEAL_PLAN.forEach(function(d, i) {
+  if (i !== dayIdx) othersHTML += renderDayCard(d);
+});
+document.getElementById('otherDays').innerHTML = othersHTML;
+
+updateFabCount();
+
+function toggleDay(e, el) {
+  if (e.target.classList.contains('ing-chip')) return;
+  el.classList.toggle('open');
+}
+
+function toggleIngredient(e, text) {
+  e.stopPropagation();
+  var chips = document.querySelectorAll('.ing-chip');
+  var targetChips = [];
+  chips.forEach(function(c) { if (c.textContent === text) targetChips.push(c); });
+
+  if (addedSet.has(text)) {
+    addedSet.delete(text);
+    shoppingList = shoppingList.filter(function(i) { return i.text !== text; });
+    targetChips.forEach(function(c) { c.classList.remove('added'); });
+  } else {
+    addedSet.add(text);
+    shoppingList.push({ id: Date.now() + Math.random(), text: text, done: false });
+    targetChips.forEach(function(c) { c.classList.add('added'); });
+    showToast('"' + text + '" aggiunto alla spesa');
+  }
+  saveList();
+  updateFabCount();
+  if (document.getElementById('drawer').classList.contains('open')) renderDrawer();
+}
+
+function openDrawer() {
+  renderDrawer();
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+function renderDrawer() {
+  var body = document.getElementById('drawerBody');
+  if (!shoppingList.length) {
+    body.innerHTML = '<div class="shopping-empty"><span>&#x1F6D2;</span>Nessun ingrediente aggiunto.<br>Clicca sui chip verdi nei pasti.</div>';
+    return;
+  }
+  body.innerHTML = shoppingList.map(function(item) {
+    return '<div class="shop-item">' +
+      '<div class="shop-check' + (item.done ? ' done' : '') + '" onclick="toggleDone(\'' + item.id + '\')">' + (item.done ? '&#x2713;' : '') + '</div>' +
+      '<span class="shop-item-text' + (item.done ? ' done' : '') + '">' + item.text + '</span>' +
+      '<button class="shop-remove" onclick="removeItem(\'' + item.id + '\')">&#x2715;</button>' +
+    '</div>';
+  }).join('');
+}
+
+function toggleDone(id) {
+  var item = shoppingList.find(function(i) { return String(i.id) === String(id); });
+  if (item) { item.done = !item.done; saveList(); renderDrawer(); }
+}
+
+function removeItem(id) {
+  var item = shoppingList.find(function(i) { return String(i.id) === String(id); });
+  if (!item) return;
+  addedSet.delete(item.text);
+  shoppingList = shoppingList.filter(function(i) { return String(i.id) !== String(id); });
+  saveList();
+  updateFabCount();
+  renderDrawer();
+  document.querySelectorAll('.ing-chip').forEach(function(c) {
+    if (c.textContent === item.text) c.classList.remove('added');
+  });
+}
+
+function clearList() {
+  if (!shoppingList.length) return;
+  if (!confirm('Svuotare tutta la lista della spesa?')) return;
+  shoppingList = [];
+  addedSet.clear();
+  saveList();
+  updateFabCount();
+  renderDrawer();
+  document.querySelectorAll('.ing-chip.added').forEach(function(c) { c.classList.remove('added'); });
+}
+
+function copyList() {
+  if (!shoppingList.length) { showToast('Lista vuota!'); return; }
+  var text = 'Lista della spesa\n\n' +
+    shoppingList.map(function(i) { return (i.done ? '[x] ' : '[ ] ') + i.text; }).join('\n');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() { showToast('Lista copiata!'); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Lista copiata!');
+  }
+}
+
+function updateFabCount() {
+  document.getElementById('fabCount').textContent = shoppingList.length;
+}
+
+var toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 1800);
+}
+</script>
+</body>
+</html>
