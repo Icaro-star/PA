@@ -546,7 +546,7 @@ function renderMeals(meals) {
       chips = '<div class="ingredients-row">' +
         m.ing.map(function(i) {
           var added = addedSet.has(i) ? ' added' : '';
-          return '<span class="ing-chip' + added + '" onclick="toggleIngredient(event, ' + JSON.stringify(i) + ')">' + i + '</span>';
+          return '<span class="ing-chip' + added + '" onclick="toggleIngredient(event, ' + JSON.stringify(i).replace(/"/g, '&quot;') + ')">' + i + '</span>';
         }).join('') +
       '</div>';
     }
@@ -601,9 +601,9 @@ function renderDayCard(d) {
 document.getElementById('todaySection').innerHTML = renderTodayCard(todayData);
 
 var othersHTML = '';
-MEAL_PLAN.forEach(function(d, i) {
-  if (i !== dayIdx) othersHTML += renderDayCard(d);
-});
+for (var offset = 1; offset <= 6; offset++) {
+  othersHTML += renderDayCard(MEAL_PLAN[(dayIdx + offset) % 7]);
+}
 document.getElementById('otherDays').innerHTML = othersHTML;
 
 updateFabCount();
