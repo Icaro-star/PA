@@ -192,6 +192,29 @@
     .shop-item-text.done { text-decoration: line-through; color: var(--muted); }
     .shop-remove { background: none; border: none; color: #ccc; font-size: 1.1rem; cursor: pointer; padding: 0 4px; line-height: 1; }
     .shop-remove:hover { color: var(--orange); }
+    .info-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .supp-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .supp-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+    .supp-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .supp-dose { font-size: .82rem; color: var(--green); margin-bottom: 2px; }
+    .supp-note { font-size: .75rem; color: var(--muted); }
+    .notes-card {}
+    .note-item { padding: 12px 18px; border-bottom: 1px solid var(--border); }
+    .note-label { font-size: .8rem; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+    .note-text { font-size: .82rem; color: #444; line-height: 1.5; }
     .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: white; border-radius: 20px; padding: 10px 20px; font-size: .85rem; font-weight: 600; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; z-index: 500; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
@@ -213,6 +236,66 @@
   <div id="todaySection"></div>
   <div class="section-title">Altri giorni</div>
   <div id="otherDays"></div>
+
+  <div class="section-title">Integratori</div>
+  <div class="info-card">
+    <div class="supp-item">
+      <div class="supp-icon">&#x2600;&#xFE0F;</div>
+      <div class="supp-body">
+        <div class="supp-name">Creatina monoidrato</div>
+        <div class="supp-dose">3-5g/die &mdash; <strong>Colazione (6:00)</strong></div>
+        <div class="supp-note">Ogni giorno, anche nei giorni di riposo</div>
+      </div>
+    </div>
+    <div class="supp-item">
+      <div class="supp-icon">&#x1F41F;</div>
+      <div class="supp-body">
+        <div class="supp-name">Omega-3</div>
+        <div class="supp-dose">2g EPA+DHA/die &mdash; <strong>Pranzo</strong></div>
+        <div class="supp-note">Priorit&agrave; cardiovascolare &mdash; assumere a pasto per miglior assorbimento</div>
+      </div>
+    </div>
+    <div class="supp-item" style="border-bottom:none">
+      <div class="supp-icon">&#x1F319;</div>
+      <div class="supp-body">
+        <div class="supp-name">Magnesio</div>
+        <div class="supp-dose">300mg/die &mdash; <strong>Sera (dopo cena)</strong></div>
+        <div class="supp-note">Favorisce sonno e recupero muscolare</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Note del nutrizionista</div>
+  <div class="info-card notes-card">
+    <div class="note-item">
+      <div class="note-label">&#x1F4AA; Proteine</div>
+      <div class="note-text">Mantenute a ~1,8g/kg per preservare la massa muscolare durante il deficit. Con gli elastici &egrave; fondamentale non scendere sotto questa soglia.</div>
+    </div>
+    <div class="note-item">
+      <div class="note-label">&#x1F550; Colazione alle 6:00</div>
+      <div class="note-text">Anticipata per rispettare il ritmo circadiano e garantire la digestione prima dell&rsquo;allenamento. Lo spuntino delle 10:00 mantiene il metabolismo attivo a met&agrave; mattina.</div>
+    </div>
+    <div class="note-item">
+      <div class="note-label">&#x1F35E; Rotazione carboidrati</div>
+      <div class="note-text">Nei giorni attivi (lun&middot;mer&middot;ven) il carboidrato principale alterna tra riso, pasta e pane per variare il carico glicemico e prevenire la monotonia.</div>
+    </div>
+    <div class="note-item">
+      <div class="note-label">&#x1F355; Pizza venerd&igrave;</div>
+      <div class="note-text">1 pizza intera margherita (~700 kcal). Il venerd&igrave; &egrave; giorno di elastici quindi il metabolismo &egrave; pi&ugrave; alto &mdash; momento ideale per il pasto libero serale.</div>
+    </div>
+    <div class="note-item">
+      <div class="note-label">&#x1F36B; Cioccolato fondente</div>
+      <div class="note-text">20g 90% cacao ogni sera alle 21:30 &mdash; attendere 2 ore prima di sdraiarsi. Antiossidanti e serotonina; non superare i 20g.</div>
+    </div>
+    <div class="note-item">
+      <div class="note-label">&#x1F4A7; Idratazione</div>
+      <div class="note-text">Minimo 3 litri/die. Privilegiare frutta ad alto contenuto d&rsquo;acqua (anguria, melone, pesche, cetrioli).</div>
+    </div>
+    <div class="note-item" style="border-bottom:none">
+      <div class="note-label">&#x2764;&#xFE0F; Rischio cardiovascolare</div>
+      <div class="note-text">Vita 91 cm in miglioramento. Le camminate quotidiane sono particolarmente efficaci per il grasso viscerale. Continuare Omega-3.</div>
+    </div>
+  </div>
 </main>
 
 <button class="fab" onclick="openDrawer()">
