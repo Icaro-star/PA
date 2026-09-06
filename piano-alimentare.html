@@ -59,6 +59,29 @@
     }
     .bell-btn.active { background: rgba(255,220,50,.35); }
     .header-badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    /* Notif drawer */
+    .notif-status { font-size: .75rem; font-weight: 600; }
+    .notif-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .notif-name { font-size: .9rem; font-weight: 700; margin-bottom: 2px; }
+    .notif-sub { font-size: .75rem; color: var(--muted); }
+    .notif-actions { display: flex; gap: 8px; padding-top: 18px; }
+    /* iOS toggle */
+    .toggle { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background: #ccc; border-radius: 26px; transition: .25s;
+    }
+    .slider:before {
+      content: ''; position: absolute;
+      width: 20px; height: 20px; left: 3px; bottom: 3px;
+      background: white; border-radius: 50%; transition: .25s;
+    }
+    input:checked + .slider { background: var(--green); }
+    input:checked + .slider:before { transform: translateX(20px); }
     main { max-width: 680px; margin: 0 auto; padding: 16px 14px; }
     .today-card {
       background: var(--card);
@@ -244,7 +267,7 @@
     </div>
     <div class="header-badges">
       <div class="water-badge">&#x1F4A7; 3L/die</div>
-      <button class="bell-btn" id="bellBtn" onclick="setupNotifications()">&#x1F514; Notifiche</button>
+      <button class="bell-btn" id="bellBtn" onclick="openNotifDrawer()">&#x1F514; Notifiche</button>
     </div>
   </div>
   <div class="date-line" style="margin-top:6px;font-size:.75rem;opacity:.7;">Aggiornato: 4 settembre 2026 &#x2022; 84,5 kg &#x2022; Obiettivo -2,5 kg/mese</div>
@@ -320,6 +343,49 @@
   &#x1F6D2; Lista spesa
   <span class="fab-count" id="fabCount">0</span>
 </button>
+
+<!-- Notification settings drawer -->
+<div class="drawer-overlay" id="notifOverlay" onclick="closeNotifDrawer()"></div>
+<div class="drawer" id="notifDrawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-head">
+    <div class="drawer-title">&#x1F514; Impostazioni notifiche</div>
+    <div id="notifPermStatus" class="notif-status"></div>
+  </div>
+  <div class="drawer-body">
+    <!-- Master toggle -->
+    <div class="notif-row" style="background:var(--green-pale);margin:-14px -20px 4px;padding:14px 20px;border-radius:0;">
+      <div>
+        <div class="notif-name">Notifiche generali</div>
+        <div class="notif-sub">Attiva o disattiva tutto</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="togAll" onchange="toggleAll(this.checked)"><span class="slider"></span></label>
+    </div>
+    <div id="notifSubSettings">
+      <div class="notif-row">
+        <div><div class="notif-name">&#x1F37D; Promemoria pasti</div><div class="notif-sub">5 min prima di ogni pasto</div></div>
+        <label class="toggle"><input type="checkbox" id="togMeals" onchange="saveNotifSettings()"><span class="slider"></span></label>
+      </div>
+      <div class="notif-row">
+        <div><div class="notif-name">&#x1F48A; Creatina</div><div class="notif-sub">Ogni giorno alle 05:55</div></div>
+        <label class="toggle"><input type="checkbox" id="togCreatina" onchange="saveNotifSettings()"><span class="slider"></span></label>
+      </div>
+      <div class="notif-row">
+        <div><div class="notif-name">&#x1F41F; Omega-3</div><div class="notif-sub">Ogni giorno alle 13:20</div></div>
+        <label class="toggle"><input type="checkbox" id="togOmega" onchange="saveNotifSettings()"><span class="slider"></span></label>
+      </div>
+      <div class="notif-row" style="border-bottom:none">
+        <div><div class="notif-name">&#x1F319; Magnesio</div><div class="notif-sub">Ogni giorno alle 21:15</div></div>
+        <label class="toggle"><input type="checkbox" id="togMagnesio" onchange="saveNotifSettings()"><span class="slider"></span></label>
+      </div>
+    </div>
+    <div class="notif-actions">
+      <button class="btn btn-copy" id="btnActivate" onclick="activateNotifications()" style="flex:1">&#x1F514; Richiedi permesso</button>
+      <button class="btn" style="background:var(--green-pale);color:var(--green);flex:1" onclick="sendTestNotif()">&#x1F9EA; Test 21:32</button>
+    </div>
+    <div style="font-size:.72rem;color:var(--muted);margin-top:12px;line-height:1.5;">Le notifiche funzionano in background su Android Chrome. Su iPhone aggiungi la pagina alla schermata Home.</div>
+  </div>
+</div>
 
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 <div class="drawer" id="drawer">
@@ -707,57 +773,137 @@ function copyMealClick(e) {
 }
 
 // ── NOTIFICHE ─────────────────────────────────────────────
-function setupNotifications() {
-  if (!('Notification' in window)) { showToast('Notifiche non supportate su questo browser'); return; }
-  if (!('serviceWorker' in navigator)) { showToast('Service Worker non supportato'); return; }
-  if (Notification.permission === 'denied') { showToast('Notifiche bloccate — abilita dai permessi del browser'); return; }
+var DEFAULT_SETTINGS = { enabled: false, meals: true, creatina: true, omega3: true, magnesio: true };
 
-  Notification.requestPermission().then(function(perm) {
-    if (perm !== 'granted') { showToast('Permesso notifiche negato'); return; }
-    navigator.serviceWorker.register('./sw.js').then(function(reg) {
-      scheduleMeals(reg);
-      document.getElementById('bellBtn').classList.add('active');
-      document.getElementById('bellBtn').textContent = '🔔 Attive';
-      showToast('Notifiche attivate per oggi!');
-    }).catch(function(err) { showToast('Errore SW: ' + err.message); });
-  });
+function loadNS() { return Object.assign({}, DEFAULT_SETTINGS, JSON.parse(localStorage.getItem('notifSettings') || '{}')); }
+function saveNS(s) { localStorage.setItem('notifSettings', JSON.stringify(s)); }
+
+function openNotifDrawer() {
+  var s = loadNS();
+  document.getElementById('togAll').checked = s.enabled;
+  document.getElementById('togMeals').checked = s.meals;
+  document.getElementById('togCreatina').checked = s.creatina;
+  document.getElementById('togOmega').checked = s.omega3;
+  document.getElementById('togMagnesio').checked = s.magnesio;
+  updateNotifStatus();
+  document.getElementById('notifOverlay').classList.add('open');
+  document.getElementById('notifDrawer').classList.add('open');
+}
+function closeNotifDrawer() {
+  document.getElementById('notifOverlay').classList.remove('open');
+  document.getElementById('notifDrawer').classList.remove('open');
 }
 
-function scheduleMeals(reg) {
-  var meals = MEAL_PLAN[dayIdx].meals;
-  var now = Date.now();
-  var scheduled = [];
-  meals.forEach(function(m) {
-    var parts = m.time.split(':');
-    var t = new Date();
-    t.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
-    var ts = t.getTime() - 5 * 60 * 1000; // 5 min prima
-    if (ts > now) {
-      scheduled.push({
-        ts: ts,
-        title: '🍽 ' + m.type,
-        body: m.name + ' — ' + m.time,
-        tag: 'meal-' + m.time.replace(':', '')
+function toggleAll(checked) {
+  var s = loadNS();
+  s.enabled = checked;
+  saveNS(s);
+  if (checked) {
+    activateNotifications();
+  } else {
+    // Disattiva: cancella tutti i timer inviando lista vuota
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then(function(reg) {
+        if (reg.active) reg.active.postMessage({ type: 'SCHEDULE', items: [] });
       });
     }
-  });
-  if (reg.active) {
-    reg.active.postMessage({ type: 'SCHEDULE', meals: scheduled });
-  } else {
-    navigator.serviceWorker.ready.then(function(r) {
-      r.active.postMessage({ type: 'SCHEDULE', meals: scheduled });
-    });
+    updateBellBtn(false);
+    showToast('Notifiche disattivate');
   }
 }
 
-// Auto-check se notifiche già attive
-if ('Notification' in window && Notification.permission === 'granted' && 'serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').then(function(reg) {
-    scheduleMeals(reg);
-    document.getElementById('bellBtn').classList.add('active');
-    document.getElementById('bellBtn').textContent = '🔔 Attive';
+function saveNotifSettings() {
+  var s = loadNS();
+  s.meals = document.getElementById('togMeals').checked;
+  s.creatina = document.getElementById('togCreatina').checked;
+  s.omega3 = document.getElementById('togOmega').checked;
+  s.magnesio = document.getElementById('togMagnesio').checked;
+  saveNS(s);
+  if (s.enabled && 'serviceWorker' in navigator && Notification.permission === 'granted') {
+    navigator.serviceWorker.ready.then(function(reg) { sendSchedule(reg, s); });
+  }
+}
+
+function activateNotifications() {
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+    showToast('Non supportato su questo browser'); return;
+  }
+  if (Notification.permission === 'denied') {
+    showToast('Notifiche bloccate — abilita nei permessi del browser'); return;
+  }
+  Notification.requestPermission().then(function(perm) {
+    updateNotifStatus();
+    if (perm !== 'granted') { showToast('Permesso negato'); document.getElementById('togAll').checked = false; return; }
+    var s = loadNS(); s.enabled = true; saveNS(s);
+    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+      sendSchedule(reg, s);
+      updateBellBtn(true);
+      showToast('Notifiche attivate!');
+    }).catch(function(e) { showToast('Errore: ' + e.message); });
   });
 }
+
+function buildScheduleItems(s) {
+  var now = Date.now();
+  var items = [];
+  function ts(h, m) { var t = new Date(); t.setHours(h, m, 0, 0); return t.getTime(); }
+
+  if (s.meals) {
+    MEAL_PLAN[dayIdx].meals.forEach(function(m) {
+      var p = m.time.split(':');
+      var t = ts(parseInt(p[0]), parseInt(p[1])) - 5 * 60000;
+      if (t > now) items.push({ ts: t, title: '🍽 ' + m.type, body: m.name + ' — ' + m.time, tag: 'meal-' + m.time.replace(':','') });
+    });
+  }
+  if (s.creatina) { var t=ts(5,55); if(t>now) items.push({ts:t, title:'💊 Creatina', body:'3-5g con la colazione', tag:'suppl-creatina'}); }
+  if (s.omega3)   { var t=ts(13,20); if(t>now) items.push({ts:t, title:'🐟 Omega-3', body:'2g EPA+DHA con il pranzo', tag:'suppl-omega3'}); }
+  if (s.magnesio) { var t=ts(21,15); if(t>now) items.push({ts:t, title:'🌙 Magnesio', body:'300mg prima di dormire', tag:'suppl-magnesio'}); }
+  return items;
+}
+
+function sendSchedule(reg, s) {
+  var items = buildScheduleItems(s);
+  var sw = reg.active || reg.installing || reg.waiting;
+  var msg = { type: 'SCHEDULE', items: items };
+  if (sw) { sw.postMessage(msg); }
+  else { navigator.serviceWorker.ready.then(function(r){ r.active.postMessage(msg); }); }
+}
+
+function sendTestNotif() {
+  if (Notification.permission !== 'granted') { showToast('Prima attiva le notifiche!'); return; }
+  var t = new Date(); t.setHours(21, 32, 0, 0);
+  var delay = t.getTime() - Date.now();
+  if (delay < 0) { showToast('21:32 \xe8 gi\xe0 passato per oggi'); return; }
+  navigator.serviceWorker.ready.then(function(reg) {
+    if (reg.active) reg.active.postMessage({ type: 'SCHEDULE', items: [{ ts: t.getTime(), title: '🧪 Test notifica', body: 'Le notifiche funzionano! 🎉', tag: 'test-notif' }] });
+    showToast('Test alle 21:32 (' + Math.round(delay/60000) + ' min)');
+  });
+}
+
+function updateNotifStatus() {
+  var el = document.getElementById('notifPermStatus');
+  if (!('Notification' in window)) { el.textContent = 'Non supportate'; el.style.color='#e76f51'; return; }
+  if (Notification.permission === 'granted') { el.textContent = '● Attive'; el.style.color='var(--green)'; document.getElementById('btnActivate').textContent = '✓ Permesso OK'; }
+  else if (Notification.permission === 'denied') { el.textContent = '● Bloccate'; el.style.color='#e76f51'; }
+  else { el.textContent = '● Non attivate'; el.style.color='var(--muted)'; }
+}
+
+function updateBellBtn(active) {
+  var b = document.getElementById('bellBtn');
+  b.classList.toggle('active', active);
+  b.textContent = active ? '🔔' : '🔔 Notifiche';
+}
+
+// Auto-ripristino se già attive
+(function() {
+  var s = loadNS();
+  if (s.enabled && 'Notification' in window && Notification.permission === 'granted' && 'serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+      sendSchedule(reg, s);
+      updateBellBtn(true);
+    });
+  }
+})();
 
 var toastTimer;
 function showToast(msg) {
