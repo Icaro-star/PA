@@ -47,6 +47,18 @@
       font-size: .75rem;
       white-space: nowrap;
     }
+    .bell-btn {
+      background: rgba(255,255,255,.2);
+      border: none;
+      border-radius: 20px;
+      color: white;
+      padding: 4px 10px;
+      font-size: .8rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .bell-btn.active { background: rgba(255,220,50,.35); }
+    .header-badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
     main { max-width: 680px; margin: 0 auto; padding: 16px 14px; }
     .today-card {
       background: var(--card);
@@ -81,7 +93,10 @@
     .meal-type-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; }
     .meal-type { font-size: .7rem; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); font-weight: 600; }
     .meal-kcal { font-size: .72rem; color: var(--green-light); font-weight: 600; }
-    .meal-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .meal-name-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+    .meal-name { font-size: .95rem; font-weight: 700; color: var(--text); flex: 1; }
+    .copy-meal-btn { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 3px 7px; font-size: .75rem; cursor: pointer; color: var(--muted); flex-shrink: 0; }
+    .copy-meal-btn:hover { background: var(--green-pale); color: var(--green); border-color: var(--green-muted); }
     .meal-macros { font-size: .72rem; color: var(--muted); margin-bottom: 6px; }
     .meal-desc { font-size: .83rem; color: #444; line-height: 1.45; white-space: pre-line; }
     .ingredients-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
@@ -227,7 +242,10 @@
       <h1>Piano Alimentare</h1>
       <div class="date-line" id="headerDate"></div>
     </div>
-    <div class="water-badge">&#x1F4A7; 3L/die</div>
+    <div class="header-badges">
+      <div class="water-badge">&#x1F4A7; 3L/die</div>
+      <button class="bell-btn" id="bellBtn" onclick="setupNotifications()">&#x1F514; Notifiche</button>
+    </div>
   </div>
   <div class="date-line" style="margin-top:6px;font-size:.75rem;opacity:.7;">Aggiornato: 4 settembre 2026 &#x2022; 84,5 kg &#x2022; Obiettivo -2,5 kg/mese</div>
 </header>
@@ -552,7 +570,7 @@ function renderMeals(meals) {
       '<div class="meal-time">' + m.time + '</div>' +
       '<div class="meal-right">' +
         '<div class="meal-type-row"><span class="meal-type">' + m.type + '</span><span class="meal-kcal">' + m.kcal + '</span></div>' +
-        '<div class="meal-name">' + m.name + '</div>' +
+        '<div class="meal-name-row"><div class="meal-name">' + m.name + '</div><button class="copy-meal-btn" data-text="' + escAttr('⏰ ' + m.time + ' — ' + m.type + '\n' + m.name + '\n\n' + m.desc) + '" onclick="copyMealClick(event)">&#x1F4CB; copia</button></div>' +
         (m.macros ? '<div class="meal-macros">' + m.macros + '</div>' : '') +
         '<div class="meal-desc">' + m.desc + '</div>' +
         chips +
@@ -669,6 +687,77 @@ function copyList() {
 }
 
 function updateFabCount() { document.getElementById('fabCount').textContent = shoppingList.length; }
+
+// ── COPIA PASTO ──────────────────────────────────────────
+function copyMealClick(e) {
+  e.stopPropagation();
+  var text = e.currentTarget.getAttribute('data-text');
+  if (!text) return;
+  var copy = function(t) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function(){ showToast('Pasto copiato!'); });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      showToast('Pasto copiato!');
+    }
+  };
+  copy(text);
+}
+
+// ── NOTIFICHE ─────────────────────────────────────────────
+function setupNotifications() {
+  if (!('Notification' in window)) { showToast('Notifiche non supportate su questo browser'); return; }
+  if (!('serviceWorker' in navigator)) { showToast('Service Worker non supportato'); return; }
+  if (Notification.permission === 'denied') { showToast('Notifiche bloccate — abilita dai permessi del browser'); return; }
+
+  Notification.requestPermission().then(function(perm) {
+    if (perm !== 'granted') { showToast('Permesso notifiche negato'); return; }
+    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+      scheduleMeals(reg);
+      document.getElementById('bellBtn').classList.add('active');
+      document.getElementById('bellBtn').textContent = '🔔 Attive';
+      showToast('Notifiche attivate per oggi!');
+    }).catch(function(err) { showToast('Errore SW: ' + err.message); });
+  });
+}
+
+function scheduleMeals(reg) {
+  var meals = MEAL_PLAN[dayIdx].meals;
+  var now = Date.now();
+  var scheduled = [];
+  meals.forEach(function(m) {
+    var parts = m.time.split(':');
+    var t = new Date();
+    t.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
+    var ts = t.getTime() - 5 * 60 * 1000; // 5 min prima
+    if (ts > now) {
+      scheduled.push({
+        ts: ts,
+        title: '🍽 ' + m.type,
+        body: m.name + ' — ' + m.time,
+        tag: 'meal-' + m.time.replace(':', '')
+      });
+    }
+  });
+  if (reg.active) {
+    reg.active.postMessage({ type: 'SCHEDULE', meals: scheduled });
+  } else {
+    navigator.serviceWorker.ready.then(function(r) {
+      r.active.postMessage({ type: 'SCHEDULE', meals: scheduled });
+    });
+  }
+}
+
+// Auto-check se notifiche già attive
+if ('Notification' in window && Notification.permission === 'granted' && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').then(function(reg) {
+    scheduleMeals(reg);
+    document.getElementById('bellBtn').classList.add('active');
+    document.getElementById('bellBtn').textContent = '🔔 Attive';
+  });
+}
 
 var toastTimer;
 function showToast(msg) {
