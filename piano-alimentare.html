@@ -381,7 +381,7 @@
     </div>
     <div class="notif-actions">
       <button class="btn btn-copy" id="btnActivate" onclick="activateNotifications()" style="flex:1">&#x1F514; Richiedi permesso</button>
-      <button class="btn" style="background:var(--green-pale);color:var(--green);flex:1" onclick="sendTestNotif()">&#x1F9EA; Test 21:32</button>
+      <button class="btn" style="background:var(--green-pale);color:var(--green);flex:1" onclick="sendTestNotif()">&#x1F9EA; Test 21:40</button>
     </div>
     <div style="font-size:.72rem;color:var(--muted);margin-top:12px;line-height:1.5;">Le notifiche funzionano in background su Android Chrome. Su iPhone aggiungi la pagina alla schermata Home.</div>
   </div>
@@ -871,9 +871,9 @@ function sendSchedule(reg, s) {
 
 function sendTestNotif() {
   if (Notification.permission !== 'granted') { showToast('Prima attiva le notifiche!'); return; }
-  var t = new Date(); t.setHours(21, 32, 0, 0);
+  var t = new Date(); t.setHours(21, 40, 0, 0);
   var delay = t.getTime() - Date.now();
-  if (delay < 0) { showToast('21:32 \xe8 gi\xe0 passato per oggi'); return; }
+  if (delay < 0) { showToast('21:40 \xe8 gi\xe0 passato per oggi'); return; }
   navigator.serviceWorker.ready.then(function(reg) {
     if (reg.active) reg.active.postMessage({ type: 'SCHEDULE', items: [{ ts: t.getTime(), title: '🧪 Test notifica', body: 'Le notifiche funzionano! 🎉', tag: 'test-notif' }] });
     showToast('Test alle 21:32 (' + Math.round(delay/60000) + ' min)');
