@@ -59,6 +59,11 @@
     }
     .bell-btn.active { background: rgba(255,220,50,.35); }
     .header-badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .goals-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+    .goal-chip { background: rgba(255,255,255,.16); border-radius: 12px; padding: 5px 10px; display: flex; flex-direction: column; line-height: 1.25; }
+    .goal-chip.warn { background: rgba(255,170,120,.28); }
+    .goal-k { font-size: .62rem; text-transform: uppercase; letter-spacing: .5px; opacity: .8; }
+    .goal-v { font-size: .9rem; font-weight: 800; }
     /* Notif drawer */
     .notif-status { font-size: .75rem; font-weight: 600; }
     .notif-row {
@@ -270,7 +275,13 @@
       <button class="bell-btn" id="bellBtn" onclick="openNotifDrawer()">&#x1F514; Notifiche</button>
     </div>
   </div>
-  <div class="date-line" style="margin-top:6px;font-size:.75rem;opacity:.7;">Aggiornato: 4 settembre 2026 &#x2022; 84,5 kg &#x2022; Obiettivo -2,5 kg/mese</div>
+  <div class="goals-bar">
+    <div class="goal-chip"><span class="goal-k">Peso attuale</span><span class="goal-v">82,6 kg</span></div>
+    <div class="goal-chip"><span class="goal-k">Obiettivo</span><span class="goal-v">&minus;3,0 kg/mese</span></div>
+    <div class="goal-chip"><span class="goal-k">Target</span><span class="goal-v">79,6 kg</span></div>
+    <div class="goal-chip warn"><span class="goal-k">&#x26A0;&#xFE0F; Reflusso</span><span class="goal-v">cene leggere</span></div>
+  </div>
+  <div class="date-line" style="margin-top:6px;font-size:.72rem;opacity:.7;">Aggiornato: ottobre 2026 &#x2022; ciclo 30 giorni &#x2022; palestra Lun&middot;Mer&middot;Ven 7:00</div>
 </header>
 
 <main>
@@ -284,8 +295,8 @@
       <div class="supp-icon">&#x2600;&#xFE0F;</div>
       <div class="supp-body">
         <div class="supp-name">Creatina monoidrato</div>
-        <div class="supp-dose">3-5g/die &mdash; <strong>Colazione (6:00)</strong></div>
-        <div class="supp-note">Ogni giorno, anche nei giorni di riposo</div>
+        <div class="supp-dose">3-5g/die &mdash; <strong>Colazione</strong></div>
+        <div class="supp-note">Ogni giorno: col post-workout (9:00) nei giorni attivi, alle 6:00 nei giorni di riposo</div>
       </div>
     </div>
     <div class="supp-item">
@@ -309,32 +320,32 @@
   <div class="section-title">Note del nutrizionista</div>
   <div class="info-card notes-card">
     <div class="note-item">
-      <div class="note-label">&#x1F4AA; Proteine</div>
-      <div class="note-text">Mantenute a ~1,8g/kg per preservare la massa muscolare durante il deficit. Con gli elastici &egrave; fondamentale non scendere sotto questa soglia.</div>
+      <div class="note-label">&#x26A0;&#xFE0F; Reflusso gastroesofageo</div>
+      <div class="note-text">Sempre considerato. Cena entro le 20:00, non sdraiarsi prima di 3h. Niente pomodoro crudo n&eacute; agrumi a cena, cotture delicate (forno, cartoccio, vapore). Niente fritti.</div>
     </div>
     <div class="note-item">
-      <div class="note-label">&#x1F550; Colazione alle 6:00</div>
-      <div class="note-text">Anticipata per rispettare il ritmo circadiano e garantire la digestione prima dell&rsquo;allenamento. Lo spuntino delle 10:00 mantiene il metabolismo attivo a met&agrave; mattina.</div>
+      <div class="note-label">&#x1F4AA; Giorni attivi &mdash; palestra 7:00</div>
+      <div class="note-text">Lun&middot;Mer&middot;Ven: cappuccino leggero alle 6:15 prima della sala attrezzi, poi colazione vera alle 9:00 (finestra anabolica) con proteina + carboidrato per il recupero muscolare.</div>
     </div>
     <div class="note-item">
-      <div class="note-label">&#x1F35E; Rotazione carboidrati</div>
-      <div class="note-text">Nei giorni attivi (lun&middot;mer&middot;ven) il carboidrato principale alterna tra riso, pasta e pane per variare il carico glicemico e prevenire la monotonia.</div>
+      <div class="note-label">&#x1F634; Giorni di riposo</div>
+      <div class="note-text">Mar&middot;Gio&middot;Sab&middot;Dom: colazione alle 6:00 e spuntino alle 10:00. Porzioni moderate e cene senza carboidrati aggiunti.</div>
     </div>
     <div class="note-item">
-      <div class="note-label">&#x1F355; Pizza venerd&igrave;</div>
-      <div class="note-text">1 pizza intera margherita (~700 kcal). Il venerd&igrave; &egrave; giorno di elastici quindi il metabolismo &egrave; pi&ugrave; alto &mdash; momento ideale per il pasto libero serale.</div>
+      <div class="note-label">&#x1F355; Pizza il sabato</div>
+      <div class="note-text">1 pizza intera margherita (~700 kcal) il sabato sera &mdash; momento ideale per il pasto pi&ugrave; libero della settimana. La domenica il pranzo &egrave; libero.</div>
     </div>
     <div class="note-item">
       <div class="note-label">&#x1F36B; Cioccolato fondente</div>
-      <div class="note-text">20g 90% cacao ogni sera alle 21:30 &mdash; attendere 2 ore prima di sdraiarsi. Antiossidanti e serotonina; non superare i 20g.</div>
+      <div class="note-text">20g 90% cacao ogni sera alle 21:30 &mdash; attendere 2 ore prima di sdraiarsi. Non superare i 20g (reflusso).</div>
     </div>
     <div class="note-item">
-      <div class="note-label">&#x1F4A7; Idratazione</div>
-      <div class="note-text">Minimo 3 litri/die. Privilegiare frutta ad alto contenuto d&rsquo;acqua (anguria, melone, pesche, cetrioli).</div>
+      <div class="note-label">&#x1F342; Stagionalit&agrave; autunnale</div>
+      <div class="note-text">Ottobre: frutta autunnale (pere, kiwi, mele, kaki, mandarini di inizio stagione) e piatti mediterranei (zuppe, legumi, pesce).</div>
     </div>
     <div class="note-item" style="border-bottom:none">
-      <div class="note-label">&#x2764;&#xFE0F; Rischio cardiovascolare</div>
-      <div class="note-text">Vita 91 cm in miglioramento. Le camminate quotidiane sono particolarmente efficaci per il grasso viscerale. Continuare Omega-3.</div>
+      <div class="note-label">&#x2764;&#xFE0F; Parametri</div>
+      <div class="note-text">BMI ~29,8 &mdash; vita 90 cm in miglioramento. Obiettivo &minus;3,0 kg/mese fino a 79,6 kg. Idratazione minimo 3 L/die. Continuare Omega-3.</div>
     </div>
   </div>
 </main>
@@ -371,7 +382,7 @@
         <label class="toggle"><input type="checkbox" id="togCreatina" onchange="saveNotifSettings()"><span class="slider"></span></label>
       </div>
       <div class="notif-row">
-        <div><div class="notif-name">&#x1F41F; Omega-3</div><div class="notif-sub">Ogni giorno alle 13:20</div></div>
+        <div><div class="notif-name">&#x1F41F; Omega-3</div><div class="notif-sub">Ogni giorno alle 13:00</div></div>
         <label class="toggle"><input type="checkbox" id="togOmega" onchange="saveNotifSettings()"><span class="slider"></span></label>
       </div>
       <div class="notif-row" style="border-bottom:none">
@@ -404,205 +415,213 @@
 <script>
 var MEAL_PLAN = [
   { // 0 - Domenica
-    name: 'Domenica', kcal: '~1.500 kcal', type: 'riposo',
-    activity: 'Pranzo libero + Riposo',
+    name: 'Domenica', kcal: '~1.700 kcal', type: 'riposo',
+    activity: 'Pranzo libero + riposo',
     meals: [
-      { time:'06:00', type:'Colazione', kcal:'~270 kcal', macros:'P 6g \xb7 C 48g \xb7 G 6g',
-        name:'Cappuccino di soia + fette tostate',
-        desc:'200ml latte di soia non zuccherato (cappuccino)\n3 fette pane di segale tostato + 2 cucchiaini marmellata di fragole senza zucchero aggiunto',
-        ing:['Latte di soia non zuccherato (200ml)','Pane di segale (3 fette)','Marmellata di fragole senza zucchero'] },
+      { time:'06:00', type:'Colazione', kcal:'~235 kcal', macros:'P 5g \xb7 C 36g \xb7 G 5g',
+        name:'Cappuccino + Wasa e marmellata',
+        desc:'Cappuccino con 200ml latte parzialmente scremato\n3 fette Wasa Fibre (integrale) + 2 cucchiaini marmellata di castagne senza zucchero aggiunto',
+        ing:['Latte parz. scremato (200ml)','Wasa Fibre','Marmellata di castagne senza zucchero'] },
+      { time:'10:00', type:'Spuntino mattina', kcal:'~80 kcal', macros:'P 2g \xb7 C 18g \xb7 G 0g',
+        name:'Frutta stagionale',
+        desc:'1 pera o 2 mandarini (mandarini di inizio stagione)',
+        ing:['Pera o mandarini'] },
       { time:'13:00', type:'Pranzo LIBERO', kcal:'--', macros:'',
         name:'Pranzo libero',
-        desc:'Nessuna restrizione - goditi il pasto con calma e senza stress.\nPreferisci piatti mediterranei; evita fritti ripetuti e dolci pesanti.',
+        desc:'Nessuna restrizione - goditi il pasto con calma e senza stress.\nConsiglio: piatti mediterranei autunnali (zuppe, legumi, pesce). Evita fritti ripetuti e dolci pesanti.\n⚠️ Reflusso: niente pomodoro crudo, limita i grassi eccessivi',
         ing:[] },
-      { time:'16:30', type:'Spuntino', kcal:'~90 kcal', macros:'P 2g \xb7 C 20g \xb7 G 0g',
-        name:'Frutta fresca',
-        desc:'300g anguria - spuntino fresco, ipocalorico',
-        ing:['Anguria (300g)'] },
-      { time:'19:30', type:'Cena leggera', kcal:'~430 kcal', macros:'P 46g \xb7 C 12g \xb7 G 18g',
-        name:'Salmone + zucchine',
-        desc:'180g salmone al forno con curcuma, limone e erbe aromatiche\n400g zucchine grigliate con mentuccia',
-        ing:['Salmone (180g)','Zucchine (400g)','Limone'] },
+      { time:'16:30', type:'Spuntino pomeriggio', kcal:'~80 kcal', macros:'P 2g \xb7 C 18g \xb7 G 0g',
+        name:'Frutta stagionale',
+        desc:'2 mandarini o 1 mela - frutta autunnale',
+        ing:['Mandarini o mela'] },
+      { time:'19:30', type:'Cena leggera', kcal:'~380 kcal', macros:'P 44g \xb7 C 8g \xb7 G 16g',
+        name:'Toast avocado e uovo',
+        desc:'70g pane integrale tostato con 1/2 avocado schiacciato + 1 uovo in camicia sopra, pepe nero e un filo EVO\n⚠️ Reflusso: cena molto leggera dopo pranzo libero, niente spezie forti',
+        ing:['Pane integrale','Avocado','Uova'] },
       { time:'21:30', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
         name:'Cioccolato fondente 90%',
-        desc:'20g - attendere 2h prima di sdraiarsi',
-        ing:['Cioccolato fondente 90% (20g)'] }
+        desc:'20g - attendere 2h prima di sdraiarsi. Non superare.',
+        ing:['Cioccolato fondente 90%'] }
     ]
   },
   { // 1 - Lunedì
-    name: 'Lunedì', kcal: '~2.000 kcal', type: 'attivo',
-    activity: 'Elastici 30 min',
+    name: 'Luned\xec', kcal: '~1.950 kcal', type: 'attivo',
+    activity: 'Palestra 7:00 - sala attrezzi',
     meals: [
-      { time:'06:00', type:'Colazione', kcal:'~270 kcal', macros:'P 6g \xb7 C 48g \xb7 G 6g',
-        name:'Cappuccino di soia + fette tostate',
-        desc:'200ml latte di soia non zuccherato (cappuccino)\n3 fette pane integrale tostato + 2 cucchiaini marmellata di fragole senza zucchero aggiunto',
-        ing:['Latte di soia non zuccherato (200ml)','Pane integrale (3 fette)','Marmellata di fragole senza zucchero'] },
-      { time:'10:00', type:'Spuntino mattina', kcal:'~130 kcal', macros:'P 12g \xb7 C 8g \xb7 G 4g',
-        name:'Yogurt greco + frutta secca',
-        desc:'150g yogurt greco 0% + 10g noci',
-        ing:['Yogurt greco 0% (150g)','Noci (10g)'] },
-      { time:'13:30', type:'Pranzo', kcal:'~500 kcal', macros:'P 42g \xb7 C 55g \xb7 G 12g',
-        name:'Riso basmati + tacchino + fagiolini',
-        desc:'70g riso basmati con zafferano e zucchine\n130g petto di tacchino ai ferri con rosmarino\n200g fagiolini al vapore con limone',
-        ing:['Riso basmati (70g)','Zucchine','Tacchino petto (130g)','Fagiolini (200g)','Limone'] },
-      { time:'16:30', type:'Spuntino', kcal:'~120 kcal', macros:'P 4g \xb7 C 12g \xb7 G 6g',
-        name:'Frutta secca + frutta',
-        desc:'15g mandorle + 150g melone o 2 albicocche',
-        ing:['Mandorle (15g)','Melone (150g) o albicocche (2)'] },
-      { time:'19:30', type:'Cena', kcal:'~430 kcal', macros:'P 44g \xb7 C 8g \xb7 G 18g',
-        name:'Branzino + peperoni',
-        desc:'200g filetti di branzino al forno con pomodorini cotti e timo\n400g peperoni grigliati\nNiente carboidrati aggiunti alla cena',
-        ing:['Branzino filetti (200g)','Pomodorini','Peperoni (400g)'] },
+      { time:'06:15', type:'Pre-allenamento', kcal:'~80 kcal', macros:'P 4g \xb7 C 6g \xb7 G 3g',
+        name:'Cappuccino',
+        desc:'Cappuccino con 200ml latte parzialmente scremato - solo bevanda, stomaco leggero per l\'allenamento',
+        ing:['Latte parz. scremato (200ml)'] },
+      { time:'09:00', type:'Post-allenamento - colazione', kcal:'~320 kcal', macros:'P 18g \xb7 C 32g \xb7 G 10g',
+        name:'Yogurt greco + Wasa',
+        desc:'150g yogurt greco 0% + 4 fette Wasa Fibre con marmellata di fragole senza zucchero + 10g noci\nFinestra anabolica: proteina + carboidrato per il recupero muscolare',
+        ing:['Yogurt greco 0% (150g)','Wasa Fibre','Marmellata di fragole senza zucchero','Noci'] },
+      { time:'13:00', type:'Pranzo - Bowl completa', kcal:'~500 kcal', macros:'P 42g \xb7 C 52g \xb7 G 13g',
+        name:'Bowl riso, tacchino e zucca',
+        desc:'Base: 60g riso basmati cotto. Sopra: 130g petto di tacchino a striscioline con rosmarino, 200g zucca al forno a cubetti, 1 cucchiaio EVO e limone.\nTutto in una ciotola - si mangia anche freddo',
+        ing:['Riso basmati','Tacchino petto (130g)','Zucca'] },
+      { time:'16:30', type:'Spuntino pomeriggio', kcal:'~130 kcal', macros:'P 5g \xb7 C 12g \xb7 G 7g',
+        name:'Frutta secca + frutto',
+        desc:'15g mandorle + 1 mela o 2 kiwi',
+        ing:['Mandorle','Mela o kiwi'] },
+      { time:'19:30', type:'Cena', kcal:'~420 kcal', macros:'P 44g \xb7 C 6g \xb7 G 18g',
+        name:'Orata + spinaci',
+        desc:'200g orata al forno con pomodorini cotti e timo\n400g spinaci saltati con aglio e 1,5 cucchiai EVO (niente carboidrati aggiunti)\n⚠️ Reflusso: cena entro le 20:00, non sdraiarsi prima di 3h, niente pomodoro crudo',
+        ing:['Orata (200g)','Pomodorini','Spinaci (400g)'] },
       { time:'21:30', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
         name:'Cioccolato fondente 90%',
-        desc:'20g - attendere 2h prima di sdraiarsi',
-        ing:['Cioccolato fondente 90% (20g)'] }
+        desc:'20g - attendere 2h prima di sdraiarsi. Non superare.',
+        ing:['Cioccolato fondente 90%'] }
     ]
   },
   { // 2 - Martedì
-    name: 'Martedì', kcal: '~1.500 kcal', type: 'riposo',
+    name: 'Marted\xec', kcal: '~1.660 kcal', type: 'riposo',
     activity: 'Riposo',
     meals: [
-      { time:'06:00', type:'Colazione', kcal:'~260 kcal', macros:'P 5g \xb7 C 46g \xb7 G 5g',
-        name:'Cappuccino di soia + fette biscottate',
-        desc:'200ml latte di soia non zuccherato (cappuccino)\n4 fette biscottate integrali + 2 cucchiaini marmellata di fragole senza zucchero aggiunto',
-        ing:['Latte di soia non zuccherato (200ml)','Fette biscottate integrali (4)','Marmellata di fragole senza zucchero'] },
+      { time:'06:00', type:'Colazione', kcal:'~235 kcal', macros:'P 5g \xb7 C 36g \xb7 G 5g',
+        name:'Cappuccino + Wasa e marmellata',
+        desc:'Cappuccino con 200ml latte parzialmente scremato\n3 fette Wasa Fibre (integrale) + 2 cucchiaini marmellata di mele senza zucchero aggiunto',
+        ing:['Latte parz. scremato (200ml)','Wasa Fibre','Marmellata di mele senza zucchero'] },
       { time:'10:00', type:'Spuntino mattina', kcal:'~110 kcal', macros:'P 10g \xb7 C 6g \xb7 G 3g',
         name:'Yogurt greco',
         desc:'150g yogurt greco 0% naturale',
         ing:['Yogurt greco 0% (150g)'] },
-      { time:'13:00', type:'Pranzo', kcal:'~480 kcal', macros:'P 46g \xb7 C 38g \xb7 G 14g',
-        name:'Pasta integrale + salmone',
-        desc:'60g pasta integrale al pomodoro fresco e basilico\n120g salmone al vapore con limone\n200g insalata verde con cetrioli',
-        ing:['Pasta integrale (60g)','Pomodori freschi','Salmone (120g)','Insalata verde (200g)','Cetrioli'] },
-      { time:'16:30', type:'Spuntino', kcal:'~100 kcal', macros:'P 2g \xb7 C 22g \xb7 G 0g',
-        name:'Frutta estiva',
-        desc:'300g anguria o 200g melone - idratante',
-        ing:['Anguria (300g) o melone (200g)'] },
-      { time:'19:30', type:'Cena', kcal:'~400 kcal', macros:'P 48g \xb7 C 8g \xb7 G 16g',
-        name:'Pollo + spinaci',
-        desc:'200g petto di pollo al cartoccio con rosmarino\n400g spinaci saltati con aglio\nGiorno riposo: nessun carboidrato aggiunto alla cena',
-        ing:['Petto di pollo (200g)','Spinaci freschi (400g)'] },
+      { time:'13:00', type:'Pranzo - Zuppa legumi e cereali', kcal:'~480 kcal', macros:'P 46g \xb7 C 42g \xb7 G 14g',
+        name:'Zuppa farro, ceci e salmone',
+        desc:'Zuppa densa: 50g farro perlato + 150g ceci + 120g salmone a tranci (a fine cottura), carote, sedano, 1 cucchiaio EVO, rosmarino.\nFacoltativo: 100g radicchio crudo con aceto di mele\nSi prepara in anticipo e si scalda',
+        ing:['Farro perlato','Ceci','Salmone (120g)','Carote','Sedano'] },
+      { time:'16:30', type:'Spuntino pomeriggio', kcal:'~80 kcal', macros:'P 2g \xb7 C 18g \xb7 G 0g',
+        name:'Frutta stagionale',
+        desc:'2 kiwi o 1 pera - frutta autunnale ricca di fibre',
+        ing:['Kiwi o pera'] },
+      { time:'19:30', type:'Cena', kcal:'~390 kcal', macros:'P 46g \xb7 C 6g \xb7 G 16g',
+        name:'Pollo + cavolfiore',
+        desc:'200g petto di pollo al cartoccio con rosmarino e limone (cottura delicata)\n400g cavolfiore al vapore con curcuma + 1,5 cucchiai EVO\n⚠️ Reflusso: niente pomodori crudi o agrumi a cena, cotture delicate',
+        ing:['Petto di pollo (200g)','Cavolfiore (400g)'] },
       { time:'21:30', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
         name:'Cioccolato fondente 90%',
-        desc:'20g - attendere 2h prima di sdraiarsi',
-        ing:['Cioccolato fondente 90% (20g)'] }
+        desc:'20g - attendere 2h prima di sdraiarsi. Non superare.',
+        ing:['Cioccolato fondente 90%'] }
     ]
   },
   { // 3 - Mercoledì
-    name: 'Mercoled\xec', kcal: '~2.000 kcal', type: 'attivo',
-    activity: 'Camminata 45-60 min',
+    name: 'Mercoled\xec', kcal: '~1.960 kcal', type: 'attivo',
+    activity: 'Palestra 7:00 - sala attrezzi',
     meals: [
-      { time:'06:00', type:'Colazione', kcal:'~270 kcal', macros:'P 6g \xb7 C 47g \xb7 G 6g',
-        name:'Cappuccino di soia + pane di segale',
-        desc:'200ml latte di soia non zuccherato (cappuccino)\n3 fette pane di segale tostato + 2 cucchiaini marmellata di fragole senza zucchero aggiunto',
-        ing:['Latte di soia non zuccherato (200ml)','Pane di segale (3 fette)','Marmellata di fragole senza zucchero'] },
-      { time:'10:00', type:'Spuntino mattina', kcal:'~130 kcal', macros:'P 4g \xb7 C 10g \xb7 G 8g',
+      { time:'06:15', type:'Pre-allenamento', kcal:'~80 kcal', macros:'P 4g \xb7 C 6g \xb7 G 3g',
+        name:'Cappuccino',
+        desc:'Cappuccino con 200ml latte parzialmente scremato - solo bevanda, stomaco leggero per l\'allenamento',
+        ing:['Latte parz. scremato (200ml)'] },
+      { time:'09:00', type:'Post-allenamento - colazione', kcal:'~310 kcal', macros:'P 14g \xb7 C 34g \xb7 G 10g',
+        name:'Wasa + frutta secca + frutto',
+        desc:'4 fette Wasa Fibre con marmellata di fragole + 15g noci + 1 pera o 1 kaki\nRecupero muscolare: carboidrato + grasso buono',
+        ing:['Wasa Fibre','Marmellata di fragole senza zucchero','Noci','Pera o kaki'] },
+      { time:'13:00', type:'Pranzo - Pasta e fagioli con polpo', kcal:'~510 kcal', macros:'P 44g \xb7 C 54g \xb7 G 13g',
+        name:'Pasta, fagioli e polpo',
+        desc:'60g pasta integrale mista + 100g fagioli borlotti + 120g polpo cotto a pezzi, pomodorini cotti, aglio, rosmarino, 1 cucchiaio EVO\nSi porta in contenitore',
+        ing:['Pasta integrale','Fagioli borlotti','Polpo (120g)','Pomodorini'] },
+      { time:'16:30', type:'Spuntino pomeriggio', kcal:'~120 kcal', macros:'P 5g \xb7 C 8g \xb7 G 7g',
         name:'Frutta secca + frutto',
-        desc:'15g noci + 1 frutto fresco (pesca o 2 prugne)',
-        ing:['Noci (15g)','Pesca o prugne'] },
-      { time:'13:30', type:'Pranzo', kcal:'~510 kcal', macros:'P 44g \xb7 C 55g \xb7 G 13g',
-        name:'Riso integrale + pollo + verdure',
-        desc:'60g riso integrale con funghi e prezzemolo\n140g spiedini di pollo\n200g verdure grigliate miste',
-        ing:['Riso integrale (60g)','Funghi','Pollo per spiedini (140g)','Verdure grigliate miste (200g)'] },
-      { time:'16:30', type:'Spuntino', kcal:'~120 kcal', macros:'P 5g \xb7 C 8g \xb7 G 7g',
-        name:'Frutta secca',
-        desc:'20g mandorle + 1 frutto stagionale',
-        ing:['Mandorle (20g)','Frutto stagionale'] },
-      { time:'19:30', type:'Cena', kcal:'~430 kcal', macros:'P 46g \xb7 C 8g \xb7 G 18g',
-        name:'Orata + broccoli',
-        desc:'200g orata al forno con olive, capperi e pomodorini cotti\n400g broccoli al vapore con limone',
-        ing:['Orata (200g)','Olive','Pomodorini','Broccoli (400g)','Limone'] },
+        desc:'20g mandorle + 1 mela',
+        ing:['Mandorle','Mela'] },
+      { time:'19:30', type:'Cena', kcal:'~420 kcal', macros:'P 46g \xb7 C 6g \xb7 G 18g',
+        name:'Branzino + verdura al forno',
+        desc:'200g branzino al forno\n400g verdura mista cotta al forno + 1,5 cucchiai EVO (ottimo per reflusso)',
+        ing:['Branzino (200g)','Verdura mista'] },
       { time:'21:30', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
         name:'Cioccolato fondente 90%',
-        desc:'20g - attendere 2h prima di sdraiarsi',
-        ing:['Cioccolato fondente 90% (20g)'] }
+        desc:'20g - attendere 2h prima di sdraiarsi. Non superare.',
+        ing:['Cioccolato fondente 90%'] }
     ]
   },
   { // 4 - Giovedì
-    name: 'Gioved\xec', kcal: '~1.500 kcal', type: 'riposo',
+    name: 'Gioved\xec', kcal: '~1.650 kcal', type: 'riposo',
     activity: 'Riposo',
     meals: [
-      { time:'06:00', type:'Colazione', kcal:'~260 kcal', macros:'P 5g \xb7 C 45g \xb7 G 5g',
-        name:'Cappuccino di soia + fette biscottate',
-        desc:'200ml latte di soia non zuccherato (cappuccino)\n4 fette biscottate integrali + 2 cucchiaini marmellata di fragole senza zucchero aggiunto',
-        ing:['Latte di soia non zuccherato (200ml)','Fette biscottate integrali (4)','Marmellata di fragole senza zucchero'] },
-      { time:'10:00', type:'Spuntino mattina', kcal:'~100 kcal', macros:'P 10g \xb7 C 8g \xb7 G 2g',
+      { time:'06:00', type:'Colazione', kcal:'~235 kcal', macros:'P 5g \xb7 C 36g \xb7 G 5g',
+        name:'Cappuccino + Wasa e marmellata',
+        desc:'Cappuccino con 200ml latte parzialmente scremato\n3 fette Wasa Fibre (integrale) + 2 cucchiaini marmellata di mirtilli senza zucchero aggiunto',
+        ing:['Latte parz. scremato (200ml)','Wasa Fibre','Marmellata di mirtilli senza zucchero'] },
+      { time:'10:00', type:'Spuntino mattina', kcal:'~100 kcal', macros:'P 10g \xb7 C 6g \xb7 G 2g',
         name:'Yogurt greco + frutto',
-        desc:'100g yogurt greco 0% + 1 frutto (albicocche 3pz, mela, pera)',
-        ing:['Yogurt greco 0% (100g)','Albicocche (3) o mela o pera'] },
-      { time:'13:00', type:'Pranzo', kcal:'~490 kcal', macros:'P 50g \xb7 C 36g \xb7 G 14g',
-        name:'Pane di segale + ricotta + insalata',
-        desc:'80g pane di segale o integrale\n200g ricotta di mucca con erbe aromatiche e pepe nero\n200g insalata mista',
-        ing:['Pane di segale o integrale (80g)','Ricotta di mucca (200g)','Insalata mista (200g)'] },
-      { time:'16:30', type:'Spuntino', kcal:'~90 kcal', macros:'P 2g \xb7 C 22g \xb7 G 0g',
-        name:'Frutta fresca',
-        desc:'300g anguria o 200g melone - idratazione',
-        ing:['Anguria (300g) o melone (200g)'] },
-      { time:'19:30', type:'Cena', kcal:'~420 kcal', macros:'P 48g \xb7 C 6g \xb7 G 18g',
-        name:'Merluzzo + cavolini di Bruxelles',
-        desc:'200g merluzzo al cartoccio con pomodorini, origano e olive\n400g cavolini di Bruxelles al forno\nGiorno riposo: nessun carboidrato aggiunto alla cena',
-        ing:['Merluzzo (200g)','Pomodorini','Olive','Cavolini di Bruxelles (400g)'] },
+        desc:'100g yogurt greco 0% + 1 pera o 2 kiwi - stagionale autunnale',
+        ing:['Yogurt greco 0% (100g)','Pera o kiwi'] },
+      { time:'13:00', type:'Pranzo - Insalatona mediterranea', kcal:'~490 kcal', macros:'P 48g \xb7 C 38g \xb7 G 14g',
+        name:'Ricotta, pane e zucchine',
+        desc:'200g ricotta + 70g pane integrale (o 2 fette Wasa) + 200g zucchine trifolate con aglio e prezzemolo + 10g noci',
+        ing:['Ricotta (200g)','Pane integrale','Zucchine','Noci'] },
+      { time:'16:30', type:'Spuntino pomeriggio', kcal:'~80 kcal', macros:'P 2g \xb7 C 18g \xb7 G 0g',
+        name:'Frutta stagionale',
+        desc:'1 pera o 1 mela - idratazione e fibre',
+        ing:['Pera o mela'] },
+      { time:'19:30', type:'Cena', kcal:'~400 kcal', macros:'P 46g \xb7 C 4g \xb7 G 16g',
+        name:'Merluzzo + patate',
+        desc:'200g merluzzo al cartoccio con pomodorini cotti, origano e olive (cottura delicata)\n200g patate al forno con rosmarino + 1,5 cucchiai EVO\n⚠️ Reflusso: giorno riposo, porzioni moderate, cotture al forno o al cartoccio',
+        ing:['Merluzzo (200g)','Pomodorini','Olive','Patate'] },
       { time:'21:30', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
         name:'Cioccolato fondente 90%',
-        desc:'20g - attendere 2h prima di sdraiarsi',
-        ing:['Cioccolato fondente 90% (20g)'] }
+        desc:'20g - attendere 2h prima di sdraiarsi. Non superare.',
+        ing:['Cioccolato fondente 90%'] }
     ]
   },
   { // 5 - Venerdì
-    name: 'Venerd\xec', kcal: '~2.000 kcal', type: 'attivo',
-    activity: 'Elastici 30 min + pizza serale',
+    name: 'Venerd\xec', kcal: '~1.950 kcal', type: 'attivo',
+    activity: 'Palestra 7:00 - sala attrezzi',
     meals: [
-      { time:'06:00', type:'Colazione', kcal:'~280 kcal', macros:'P 6g \xb7 C 50g \xb7 G 6g',
-        name:'Cappuccino di soia + fette tostate',
-        desc:'200ml latte di soia non zuccherato (cappuccino)\n3 fette pane integrale tostato + 3 cucchiaini marmellata di fragole senza zucchero aggiunto',
-        ing:['Latte di soia non zuccherato (200ml)','Pane integrale (3 fette)','Marmellata di fragole senza zucchero'] },
-      { time:'10:00', type:'Spuntino mattina', kcal:'~120 kcal', macros:'P 5g \xb7 C 10g \xb7 G 7g',
-        name:'Frutta secca + frutta',
-        desc:'15g noci + 1 frutto fresco (pesca, prugna, fico)',
-        ing:['Noci (15g)','Frutto fresco (pesca, prugna o fico)'] },
-      { time:'13:30', type:'Pranzo', kcal:'~480 kcal', macros:'P 48g \xb7 C 50g \xb7 G 12g',
-        name:'Pasta integrale + ceci + gamberetti',
-        desc:'60g pasta integrale con 150g ceci + 80g gamberetti, rosmarino, pomodorini cotti\n200g insalata di rucola e pomodori',
-        ing:['Pasta integrale (60g)','Ceci (150g)','Gamberetti (80g)','Rucola','Pomodori','Pomodorini'] },
-      { time:'16:30', type:'Spuntino', kcal:'~130 kcal', macros:'P 5g \xb7 C 8g \xb7 G 9g',
-        name:'Frutta secca',
-        desc:'20g mandorle + frutto fresco di stagione',
-        ing:['Mandorle (20g)','Frutto fresco di stagione'] },
-      { time:'19:30', type:'Cena - PIZZA', kcal:'~700 kcal', macros:'P 25g \xb7 C 85g \xb7 G 22g',
-        name:'Pizza margherita',
-        desc:'1 pizza intera margherita - goditi senza sensi di colpa!\n(Giorno attivo: metabolismo piu alto)',
-        ing:[] }
+      { time:'06:15', type:'Pre-allenamento', kcal:'~80 kcal', macros:'P 4g \xb7 C 6g \xb7 G 3g',
+        name:'Cappuccino',
+        desc:'Cappuccino con 200ml latte parzialmente scremato - solo bevanda, stomaco leggero per l\'allenamento',
+        ing:['Latte parz. scremato (200ml)'] },
+      { time:'09:00', type:'Post-allenamento - colazione', kcal:'~310 kcal', macros:'P 14g \xb7 C 30g \xb7 G 10g',
+        name:'Wasa + frutta secca + frutto',
+        desc:'4 fette Wasa Fibre con marmellata + 15g noci + 1 pera\nRecupero muscolare post-allenamento',
+        ing:['Wasa Fibre','Marmellata di fragole senza zucchero','Noci','Pera'] },
+      { time:'13:00', type:'Pranzo - Bowl orzo e lenticchie', kcal:'~490 kcal', macros:'P 48g \xb7 C 50g \xb7 G 12g',
+        name:'Orzo, lenticchie e salsiccia di pollo',
+        desc:'60g orzo perlato + 100g lenticchie verdi + 100g salsiccia di pollo a pezzetti rosolata, carote, sedano, alloro, 1 cucchiaio EVO',
+        ing:['Orzo perlato','Lenticchie verdi','Salsiccia di pollo (100g)','Carote','Sedano'] },
+      { time:'16:30', type:'Spuntino pomeriggio', kcal:'~130 kcal', macros:'P 5g \xb7 C 8g \xb7 G 9g',
+        name:'Frutta secca + frutto',
+        desc:'20g mandorle + 1 mela',
+        ing:['Mandorle','Mela'] },
+      { time:'19:30', type:'Cena', kcal:'~430 kcal', macros:'P 44g \xb7 C 8g \xb7 G 18g',
+        name:'Salmone + peperoni',
+        desc:'200g salmone al cartoccio con finocchio e scorza d\'arancia\n400g peperoni grigliati + 1,5 cucchiai EVO (niente carboidrati aggiunti)\n⚠️ Reflusso: cena leggera anche nei giorni attivi, peperoni ben cotti, niente fritti',
+        ing:['Salmone (200g)','Finocchio','Peperoni (400g)'] },
+      { time:'21:30', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
+        name:'Cioccolato fondente 90%',
+        desc:'20g - attendere 2h prima di sdraiarsi. Non superare.',
+        ing:['Cioccolato fondente 90%'] }
     ]
   },
   { // 6 - Sabato
-    name: 'Sabato', kcal: '~1.500 kcal', type: 'riposo',
-    activity: 'Riposo',
+    name: 'Sabato', kcal: '~1.980 kcal', type: 'riposo',
+    activity: 'Riposo - sera pizza 🍕',
     meals: [
-      { time:'06:00', type:'Colazione', kcal:'~250 kcal', macros:'P 5g \xb7 C 44g \xb7 G 5g',
-        name:'Cappuccino di soia + fette biscottate',
-        desc:'200ml latte di soia non zuccherato (cappuccino)\n4 fette biscottate integrali + 2 cucchiaini marmellata di fragole senza zucchero aggiunto',
-        ing:['Latte di soia non zuccherato (200ml)','Fette biscottate integrali (4)','Marmellata di fragole senza zucchero'] },
+      { time:'06:00', type:'Colazione', kcal:'~235 kcal', macros:'P 5g \xb7 C 36g \xb7 G 5g',
+        name:'Cappuccino + Wasa e marmellata',
+        desc:'Cappuccino con 200ml latte parzialmente scremato\n3 fette Wasa Fibre (integrale) + 2 cucchiaini marmellata di mirtilli senza zucchero aggiunto',
+        ing:['Latte parz. scremato (200ml)','Wasa Fibre','Marmellata di mirtilli senza zucchero'] },
       { time:'10:00', type:'Spuntino mattina', kcal:'~110 kcal', macros:'P 10g \xb7 C 6g \xb7 G 3g',
         name:'Yogurt greco',
         desc:'150g yogurt greco 0% naturale',
         ing:['Yogurt greco 0% (150g)'] },
-      { time:'13:00', type:'Pranzo', kcal:'~500 kcal', macros:'P 48g \xb7 C 36g \xb7 G 14g',
-        name:'Pasta + lenticchie + sgombro',
-        desc:'60g pasta integrale con 100g lenticchie\n120g sgombro alla piastra con limone e prezzemolo\n200g scarola cotta',
-        ing:['Pasta integrale (60g)','Lenticchie (100g)','Sgombro (120g)','Scarola (200g)','Limone'] },
-      { time:'16:30', type:'Spuntino', kcal:'~90 kcal', macros:'P 2g \xb7 C 22g \xb7 G 0g',
-        name:'Frutta estiva',
-        desc:'300g anguria o 200g melone - ipocalorico e idratante',
-        ing:['Anguria (300g) o melone (200g)'] },
-      { time:'19:30', type:'Cena', kcal:'~380 kcal', macros:'P 46g \xb7 C 6g \xb7 G 16g',
-        name:'Sogliola + melanzane',
-        desc:'200g filetti di sogliola al forno con erbe aromatiche e limone\n400g melanzane grigliate con origano\nGiorno riposo: nessun carboidrato aggiunto alla cena',
-        ing:['Sogliola filetti (200g)','Melanzane (400g)','Limone'] },
+      { time:'13:00', type:'Pranzo - Pasta al pomodoro', kcal:'~455 kcal', macros:'P 42g \xb7 C 34g \xb7 G 14g',
+        name:'Pasta integrale al pomodoro',
+        desc:'60g pasta integrale al pomodoro fresco, basilico e aglio, 1 cucchiaio EVO',
+        ing:['Pasta integrale','Pomodori freschi'] },
+      { time:'16:30', type:'Spuntino pomeriggio', kcal:'~80 kcal', macros:'P 2g \xb7 C 18g \xb7 G 0g',
+        name:'Frutta stagionale',
+        desc:'1 mela o 1 pera - spuntino leggero prima della pizza',
+        ing:['Mela o pera'] },
+      { time:'19:30', type:'Cena - PIZZA', kcal:'~700 kcal', macros:'P 25g \xb7 C 85g \xb7 G 22g',
+        name:'Pizza margherita',
+        desc:'1 pizza intera margherita (~700 kcal) - goditi senza sensi di colpa!',
+        ing:[] },
       { time:'21:30', type:'Spuntino serale', kcal:'~110 kcal', macros:'',
         name:'Cioccolato fondente 90%',
-        desc:'20g - attendere 2h prima di sdraiarsi',
-        ing:['Cioccolato fondente 90% (20g)'] }
+        desc:'20g - attendere 2h prima di sdraiarsi. Non superare.',
+        ing:['Cioccolato fondente 90%'] }
     ]
   }
 ];
@@ -856,7 +875,7 @@ function buildScheduleItems(s) {
     });
   }
   if (s.creatina) { var t=ts(5,55); if(t>now) items.push({ts:t, title:'💊 Creatina', body:'3-5g con la colazione', tag:'suppl-creatina'}); }
-  if (s.omega3)   { var t=ts(13,20); if(t>now) items.push({ts:t, title:'🐟 Omega-3', body:'2g EPA+DHA con il pranzo', tag:'suppl-omega3'}); }
+  if (s.omega3)   { var t=ts(13,0); if(t>now) items.push({ts:t, title:'🐟 Omega-3', body:'2g EPA+DHA con il pranzo', tag:'suppl-omega3'}); }
   if (s.magnesio) { var t=ts(21,15); if(t>now) items.push({ts:t, title:'🌙 Magnesio', body:'300mg prima di dormire', tag:'suppl-magnesio'}); }
   return items;
 }
